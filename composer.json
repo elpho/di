@@ -1,0 +1,13 @@
+{
+  "name": "elpho/di",
+  "description": "Dependency injection engine for the elpho framework",
+  "require": {
+    "elpho/lang": ">=0.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "elpho\\di\\": "src/"
+    }
+  },
+  "license": "ISC"
+}
