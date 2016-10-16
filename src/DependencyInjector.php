@@ -10,16 +10,24 @@
       $this->providers = new Object();
     }
 
-    public function registerProvider($providerName){
+    public function registerProvider($provider){
+      $providerName = null;
+
+      if(is_string($provider))
+        $providerName = $provider;
+
+      if(is_object($provider))
+        $providerName = get_class($provider);
+
       if(!class_exists($providerName))
         throw new \Exception("Invalid dependency provider: '".$providerName."' not found");
 
       if(!in_array('elpho\\di\\DependencyProvider', class_implements($providerName)))
         throw new \Exception("Invalid dependency provider: '".$providerName."' does not implement DependencyProvider interface");
 
-      $className = call(array($providerName, 'getProvidedClassName'));
+      $className = call(array($provider, 'getProvidedClassName'));
 
-      $this->providers->{$className} = $providerName;
+      $this->providers->{$className} = $provider;
     }
 
     public function inject($target, $normalArgArray=null){
@@ -67,33 +75,13 @@
     }
 
     private function buildDependency(\ReflectionParameter $parameter){
-      //TODO upgrade to php7 to be able to infere by type
-      /**
-      $type = $parameter->getType();
-      if($type == null){
-        if(!$parameter->allowsNull())
-          throw new \Exception("No injectable type specified for parameter '".$parameter->getName()."'");
-
-        return null;
-      }
-      /*/
       $type = ucwords($parameter->getName());
-      /**/
-
-      if(!is_string($type))
-        $type = $type->__toString();
 
       if($this->providers[$type] === null)
         throw new \Exception("No dependency provider found for type '".$parameter->getName()."'");
 
-      $providerName = $this->providers[$type];
+      $provider = $this->providers[$type];
 
-      if(!class_exists($providerName))
-        throw new \Exception("Invalid dependency provider: '".$providerName."' not found");
-
-      if(!in_array("elpho\\di\\DependencyProvider", class_implements($providerName)))
-        throw new \Exception("Invalid dependency provider: '".$providerName."' does not implement DependencyProvider interface");
-
-      return call(array($providerName, "getInstance"));
+      return call(array($provider, "getInstance"));
     }
   }
