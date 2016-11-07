@@ -1,13 +1,13 @@
 <?php
   namespace elpho\di;
 
-  use elpho\lang\Object;
+  use elpho\lang\ProtoObject;
 
   class DependencyInjector{
     private $providers = null;
 
     public function __construct(){
-      $this->providers = new Object();
+      $this->providers = new ProtoObject();
     }
 
     public function registerProvider($provider){
