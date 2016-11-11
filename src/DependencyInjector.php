@@ -13,11 +13,11 @@
     public function registerProvider($provider){
       $providerName = null;
 
-      if(is_string($provider))
-        $providerName = $provider;
+      if(is_string($provider)){
+        $provider = new $provider;
+      }
 
-      if(is_object($provider))
-        $providerName = get_class($provider);
+      $providerName = get_class($provider);
 
       if(!class_exists($providerName))
         throw new \Exception("Invalid dependency provider: '".$providerName."' not found");
